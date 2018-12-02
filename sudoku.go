@@ -19,30 +19,36 @@ func sudokuSolve(grid [9][9]int) {
 	X := [324]XStruct{} // [N * N * 4]
 
 	keyNames := [4]string{"rc", "rn", "cn", "bn"}
+
 	nameIndex := 0
-
-	j := -1
-
-	for i := 0; i < len(X); i++ {
-		var k int
-		if nameIndex == 0 {
-			k = i % N
-			if k == 0 {
-				j++
-			}
-		} else {
-			k = (i % N) + 1
-			if k == 1 {
-				j++
-			}
-		}
-		X[i].Values = [2]int{j, k}
-		X[i].KeyName = keyNames[nameIndex]
-		if i == 80 || i == 160 || i == 240 {
-			nameIndex++
-			j = -1
+	k := 0
+	for i := 0; i < N; i++ {
+		for j := 0; j < N; j++ {
+			X[k].Values = [2]int{i, j}
+			X[k].KeyName = "rc"
+			k++
 		}
 	}
+
+	for h := 0; h < 3; h++ {
+		nameIndex++
+		for i := 0; i < N; i++ {
+			for j := 1; j < N+1; j++ {
+				X[k].Values = [2]int{i, j}
+				X[k].KeyName = keyNames[nameIndex]
+				k++
+			}
+		}
+	}
+
+	for h := 0; h < N; h++ {
+		for i := 0; i < N; i++ {
+			for j := 1; j < N+1; j++ {
+				b := (h/R)*R + (i / C)
+			}
+		}
+	}
+
 }
 
 func main() {
