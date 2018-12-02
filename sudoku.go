@@ -4,12 +4,24 @@ import (
 	"fmt"
 )
 
+// Y[(r, c, n)] = [
+// 	("rc", (r, c)),
+// 	("rn", (r, n)),
+// 	("cn", (c, n)),
+// 	("bn", (b, n))]
+
 type XStruct struct {
 	KeyName string
 	Values  [2]int
 }
 
 type XArray []XStruct
+
+type YStruct struct {
+	R int
+	C int
+	N int
+}
 
 func sudokuSolve(grid [9][9]int) {
 	R, C := 3, 3
@@ -41,10 +53,33 @@ func sudokuSolve(grid [9][9]int) {
 		}
 	}
 
+	Y := map[YStruct][4]XStruct{}
+
 	for h := 0; h < N; h++ {
 		for i := 0; i < N; i++ {
 			for j := 1; j < N+1; j++ {
 				b := (h/R)*R + (i / C)
+				yStruct := YStruct{h, i, j}
+				rc := XStruct{}
+				rc.KeyName = "rc"
+				rc.Values = [2]int{h, i}
+
+				rn := XStruct{}
+				rn.KeyName = "rn"
+				rn.Values = [2]int{h, j}
+
+				cn := XStruct{}
+				cn.KeyName = "cn"
+				cn.Values = [2]int{i, j}
+
+				bn := XStruct{}
+				bn.KeyName = "bn"
+				bn.Values = [2]int{b, j}
+
+				Y[yStruct] = [4]XStruct{rc, rn, cn, bn}
+				// yStruct.R = h
+				// yStruct.C = i
+				// yStruct.N = j
 			}
 		}
 	}
