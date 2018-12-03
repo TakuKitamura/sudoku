@@ -23,6 +23,31 @@ type YStruct struct {
 	N int
 }
 
+func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct) {
+
+	Z := map[XStruct][9]YStruct{}
+	i := 0
+	ystruct := [9]YStruct{}
+
+	for _, v := range X { // ok
+		for key, vv := range Y { // ok
+			for _, vvv := range vv { //ok
+				if v == vvv {
+					ystruct[i] = key
+					if i == 8 {
+						Z[v] = ystruct
+						i = 0
+					} else {
+						i++
+					}
+				}
+			}
+		}
+	}
+
+	fmt.Println(Z)
+}
+
 func sudokuSolve(grid [9][9]int) {
 	R, C := 3, 3
 	fmt.Println(R, C)
