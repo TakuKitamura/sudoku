@@ -36,14 +36,14 @@ def exact_cover(X, Y):
     return X, Y
 
 def solve(X, Y, solution):
-    if X == {}:
-        return solution
-    c = min(X, key=lambda c: len(X[c]))
-    r = list(X[c])[0]
-    solution.append(r)
-    select(X, Y, r)
-    a = list(solve(X, Y, solution))
-    return a
+    while True:
+        if X == {}:
+            return solution
+        else:
+            c = min(X, key=lambda c: len(X[c]))
+            r = list(X[c])[0]
+            solution.append(r)
+            select(X, Y, r)
 
 def select(X, Y, r):
     cols = []
