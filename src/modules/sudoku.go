@@ -14,15 +14,16 @@ type YStruct struct {
 }
 
 func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct, Z map[XStruct][9]YStruct) {
-	i := 0
-	yStruct := [9]YStruct{}
 	for j := 0; j < len(X); j++ {
+		XJ := &X[j]
+		yStruct := [9]YStruct{}
+		i := 0
 		for key, vv := range Y {
 			for k := 0; k < len(vv); k++ {
-				if X[j] == vv[k] {
+				if *XJ == vv[k] {
 					yStruct[i] = key
 					if i == 8 {
-						Z[X[j]] = yStruct
+						Z[*XJ] = yStruct
 						i = 0
 					} else {
 						i++
@@ -46,10 +47,10 @@ func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
 					for j := 0; j < len(ZV); j++ {
 						if ZV[j] == vv {
 							ZV[j] = YStruct{0, 0, 0}
+							Z[vvv] = ZV
 							break
 						}
 					}
-					Z[vvv] = ZV
 				}
 			}
 		}
@@ -60,49 +61,41 @@ func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
 func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruct) {
 	i := 0
 	for i < len(solution) {
-		min := 10
-		// c := XStruct{}
-		counter := 0
 		isNullYStruct := YStruct{0, 0, 0}
 		for key, v := range Z {
+			counter := 0
 			for i := 0; i < len(v); i++ {
 				if v[i] != isNullYStruct {
 					counter++
 				}
 			}
+			min := 10
 			if counter < min {
 				min = counter
 				if min == 1 {
-					r := YStruct{}
 					for j := 0; j < len(Z[key]); j++ {
 						if Z[key][j] != isNullYStruct {
-							r = Z[key][j]
+							solution[i] = Z[key][j]
+							choice(Z, Y, solution[i])
+							i++
 							break
 						}
 					}
-					solution[i] = r
-					choice(Z, Y, r)
-					i++
 					break
 				}
 			}
-			counter = 0
 		}
-
 	}
 }
 
 func SudokuSolve(grid [9][9]int) [9][9]int {
-	R, C := 3, 3
 	N := 9
 	X := [324]XStruct{} // [N * N * 4]
 	keyNames := [4]string{"rc", "rn", "cn", "bn"}
-	// nameIndex := 0
 	k := 0
 	for i := 0; i < N; i++ {
 		for j := 0; j < N; j++ {
-			X[k].Values = [2]int{i, j}
-			X[k].KeyName = "rc"
+			X[k] = XStruct{KeyName: keyNames[0], Values: [2]int{i, j}}
 			k++
 		}
 	}
@@ -120,28 +113,18 @@ func SudokuSolve(grid [9][9]int) [9][9]int {
 	for h := 0; h < N; h++ {
 		for i := 0; i < N; i++ {
 			for j := 1; j < N+1; j++ {
+				R, C := 3, 3
 				b := (h/R)*R + (i / C)
-				// yStruct := YStruct{h, i, j}
 				yStructArray[k] = YStruct{h, i, j}
-
 				v := [2]int{h, i}
-
 				rc := XStruct{KeyName: keyNames[0], Values: v}
-
 				v = [2]int{h, j}
-
 				rn := XStruct{KeyName: keyNames[1], Values: v}
-
 				v = [2]int{i, j}
-
 				cn := XStruct{KeyName: keyNames[2], Values: v}
-
 				v = [2]int{b, j}
-
 				bn := XStruct{KeyName: keyNames[3], Values: v}
-
 				Y[yStructArray[k]] = [4]XStruct{rc, rn, cn, bn}
-
 				k++
 			}
 		}

@@ -1,6 +1,0 @@
-goos: darwin
-goarch: amd64
-pkg: sudoku/src/modules
-BenchmarkSudokuSolve-12    	2000000000	         0.00 ns/op
-PASS
-ok  	sudoku/src/modules	0.061s
