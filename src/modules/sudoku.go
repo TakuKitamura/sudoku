@@ -1,8 +1,4 @@
-package main
-
-import (
-	"fmt"
-)
+package modules
 
 type XStruct struct {
 	KeyName string
@@ -21,9 +17,9 @@ func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct) map[XStruct][9]YStruct
 	Z := map[XStruct][9]YStruct{}
 	i := 0
 	yStruct := [9]YStruct{}
-
 	for _, v := range X {
 		for key, vv := range Y {
+
 			for _, vvv := range vv {
 				if v == vvv {
 					yStruct[i] = key
@@ -68,7 +64,7 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 	i := 0
 	for i < len(solution) {
 		min := 10
-		c := XStruct{}
+		// c := XStruct{}
 		counter := 0
 		isNullYStruct := YStruct{0, 0, 0}
 		for key, v := range Z {
@@ -79,32 +75,32 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 			}
 			if counter < min {
 				min = counter
-				c = key
 				if min == 1 {
+					r := YStruct{}
+					for _, v := range Z[key] {
+						if v != isNullYStruct {
+							r = v
+							break
+						}
+					}
+					solution[i] = r
+					choice(Z, Y, r)
+					i++
 					break
 				}
 			}
 			counter = 0
 		}
-		r := YStruct{}
-		for _, v := range Z[c] {
-			if v != isNullYStruct {
-				r = v
-				break
-			}
-		}
-		solution[i] = r
-		choice(Z, Y, r)
-		i++
+
 	}
 }
 
-func sudokuSolve(grid [9][9]int) [9][9]int {
+func SudokuSolve(grid [9][9]int) [9][9]int {
 	R, C := 3, 3
 	N := 9
 	X := [324]XStruct{} // [N * N * 4]
 	keyNames := [4]string{"rc", "rn", "cn", "bn"}
-	nameIndex := 0
+	// nameIndex := 0
 	k := 0
 	for i := 0; i < N; i++ {
 		for j := 0; j < N; j++ {
@@ -114,11 +110,9 @@ func sudokuSolve(grid [9][9]int) [9][9]int {
 		}
 	}
 	for h := 0; h < 3; h++ {
-		nameIndex++
 		for i := 0; i < N; i++ {
 			for j := 1; j < N+1; j++ {
-				X[k].Values = [2]int{i, j}
-				X[k].KeyName = keyNames[nameIndex]
+				X[k] = XStruct{KeyName: keyNames[h+1], Values: [2]int{i, j}}
 				k++
 			}
 		}
@@ -129,21 +123,22 @@ func sudokuSolve(grid [9][9]int) [9][9]int {
 			for j := 1; j < N+1; j++ {
 				b := (h/R)*R + (i / C)
 				yStruct := YStruct{h, i, j}
-				rc := XStruct{}
-				rc.KeyName = "rc"
-				rc.Values = [2]int{h, i}
 
-				rn := XStruct{}
-				rn.KeyName = "rn"
-				rn.Values = [2]int{h, j}
+				v := [2]int{h, i}
 
-				cn := XStruct{}
-				cn.KeyName = "cn"
-				cn.Values = [2]int{i, j}
+				rc := XStruct{KeyName: keyNames[0], Values: v}
 
-				bn := XStruct{}
-				bn.KeyName = "bn"
-				bn.Values = [2]int{b, j}
+				v = [2]int{h, j}
+
+				rn := XStruct{KeyName: keyNames[1], Values: v}
+
+				v = [2]int{i, j}
+
+				cn := XStruct{KeyName: keyNames[2], Values: v}
+
+				v = [2]int{b, j}
+
+				bn := XStruct{KeyName: keyNames[3], Values: v}
 
 				Y[yStruct] = [4]XStruct{rc, rn, cn, bn}
 			}
@@ -156,8 +151,7 @@ func sudokuSolve(grid [9][9]int) [9][9]int {
 			if n == 0 {
 				zeroCount++
 			} else {
-				yStruct := YStruct{i, j, n}
-				choice(Z, Y, yStruct)
+				choice(Z, Y, YStruct{i, j, n})
 			}
 		}
 	}
@@ -167,20 +161,4 @@ func sudokuSolve(grid [9][9]int) [9][9]int {
 		grid[v.R][v.C] = v.N
 	}
 	return grid
-}
-
-func main() {
-	grid := [9][9]int{
-		{0, 6, 1, 0, 0, 7, 0, 0, 3},
-		{0, 9, 2, 0, 0, 3, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 8, 5, 3, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 5, 0, 4},
-		{5, 0, 0, 0, 0, 8, 0, 0, 0},
-		{0, 4, 0, 0, 0, 0, 0, 0, 1},
-		{0, 0, 0, 1, 6, 0, 8, 0, 0},
-		{6, 0, 0, 0, 0, 0, 0, 0, 0},
-	}
-	results := sudokuSolve(grid)
-	fmt.Println(results)
 }
