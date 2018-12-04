@@ -48,37 +48,121 @@ func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct) map[XStruct][9]YStruct
 	return Z
 }
 
-func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
-	for _, v := range Y[r] {
-		for _, vv := range Z[v] {
-			for _, vvv := range Y[vv] {
-				if vvv != v {
-					ZV := Z[vvv]
-					for i := 0; i < len(ZV); i++ {
-						if ZV[i] == vv {
-							ZV[i] = YStruct{0, 0, 0}
-							break
-						}
-					}
-					Z[vvv] = ZV
-				}
-			}
-
-		}
-	}
-}
-
 // def select(X, Y, r):
+//     cols = []
 //     for j in Y[r]:
 //         for i in X[j]:
 //             for k in Y[i]:
 //                 if k != j:
 //                     X[k].remove(i)
 //         cols.append(X.pop(j))
+//     print(cols)
+//     return cols
 
-func sudokuSolve(grid [9][9]int) {
+func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
+	// cols := make([][9]YStruct, len(Y[r]))
+	for _, v := range Y[r] {
+		for _, vv := range Z[v] {
+			for _, vvv := range Y[vv] {
+				if vvv != v {
+					ZV := Z[vvv]
+					for j := 0; j < len(ZV); j++ {
+						if ZV[j] == vv {
+							ZV[j] = YStruct{0, 0, 0}
+							break
+						}
+					}
+					Z[vvv] = ZV
+				}
+			}
+		}
+		delete(Z, v)
+		// if isReturnedPop == false {
+		// 	delete(Z, v)
+		// } else {
+		// 	cols[i] = Z[v]
+		// }
+	}
+
+	// if isReturnedPop == false {
+	// 	return nil
+	// } else {
+	// 	return cols
+	// }
+}
+
+// def solve(X, Y, solution):
+//     if not X:
+//         yield list(solution)
+//     else:
+//         c = min(X, key=lambda c: len(X[c]))
+//         for r in list(X[c]):
+//             solution.append(r)
+//             cols = select(X, Y, r)
+//             for s in solve(X, Y, solution):
+//                 yield s
+//             deselect(X, Y, r, cols)
+//             solution.pop()
+
+func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruct) {
+	i := 0
+	// fmt.Println(Z)
+	for i < len(solution) {
+		min := 10
+		c := XStruct{}
+		counter := 0
+		isNullYStruct := YStruct{0, 0, 0}
+		// fmt.Println(Z)
+		for key, v := range Z {
+			// fmt.Println(key, v)
+			for _, vv := range v {
+				if vv != isNullYStruct {
+					counter++
+				}
+			}
+			if counter == 0 {
+				continue
+			}
+			fmt.Println(counter, min, key, v)
+			if counter < min {
+				min = counter
+				c = key
+
+				if min == 1 {
+					break
+				}
+			} else {
+				fmt.Println(counter, min)
+			}
+			counter = 0
+		}
+		// fmt.Println()
+
+		// if min == 0 {
+		// 	break
+		// }
+		// fmt.Println(min, c, Z[c])
+		// fmt.Println()
+		r := YStruct{}
+		// fmt.Println(c, Z[c])
+		for _, v := range Z[c] {
+			if v != isNullYStruct {
+				r = v
+				break
+			}
+		}
+		// r := Z[c][0]
+		solution[i] = r
+		// fmt.Println(solution)
+		choice(Z, Y, r)
+		i++
+
+	}
+}
+
+func sudokuSolve(grid [9][9]int) [9][9]int {
 	R, C := 3, 3
-	fmt.Println(R, C)
+	// fmt.Println(R, C)
 	N := 9
 
 	X := [324]XStruct{} // [N * N * 4]
@@ -141,19 +225,34 @@ func sudokuSolve(grid [9][9]int) {
 	// for j, n in enumerate(row):
 
 	Z := exactCover(X, Y)
-
+	zeroCount := 0
 	for i, row := range grid {
-		fmt.Println(i, row)
+		// fmt.Println(i, row)
 		for j, n := range row {
-			if n != 0 {
+			if n == 0 {
+				zeroCount++
+			} else {
 				yStruct := YStruct{i, j, n}
-				// fmt.Println(yStruct)
 				choice(Z, Y, yStruct)
-				// fmt.Println(Z, yStruct)
 			}
 		}
 	}
-	fmt.Println(Z)
+	// fmt.Println(Z)
+	solution := make([]YStruct, zeroCount)
+	// fmt.Println(solution)
+	solve(Z, Y, solution)
+	fmt.Println(solution)
+	for _, v := range solution {
+		grid[v.R][v.C] = v.N
+	}
+	return grid
+
+	// 	for (r, c, n) in a:
+	// 	grid[r][c] = n
+	// return grid
+
+	// solution := make([]YStruct, zeroCount)
+	// fmt.Println(solution)
 
 }
 
@@ -169,5 +268,5 @@ func main() {
 		{0, 0, 0, 1, 6, 0, 8, 0, 0},
 		{6, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
-	sudokuSolve(grid)
+	fmt.Println(sudokuSolve(grid))
 }
