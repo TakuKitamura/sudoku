@@ -30,19 +30,18 @@ func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct, Z map[XStruct][9]YStru
 				}
 			}
 		}
-		// fmt.Println()
 	}
 }
 
 func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
 	isNullYStruct := YStruct{0, 0, 0}
-	for _, v := range Y[r] {
-		for _, vv := range Z[v] {
+	for i := 0; i < len(Y[r]); i++ {
+		for _, vv := range Z[Y[r][i]] {
 			if vv == isNullYStruct {
 				continue
 			}
 			for _, vvv := range Y[vv] {
-				if vvv != v {
+				if vvv != Y[r][i] {
 					ZV := Z[vvv]
 					for j := 0; j < len(ZV); j++ {
 						if ZV[j] == vv {
@@ -54,7 +53,7 @@ func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
 				}
 			}
 		}
-		delete(Z, v)
+		delete(Z, Y[r][i])
 	}
 }
 
@@ -66,8 +65,8 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 		counter := 0
 		isNullYStruct := YStruct{0, 0, 0}
 		for key, v := range Z {
-			for _, vv := range v {
-				if vv != isNullYStruct {
+			for i := 0; i < len(v); i++ {
+				if v[i] != isNullYStruct {
 					counter++
 				}
 			}
@@ -75,9 +74,9 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 				min = counter
 				if min == 1 {
 					r := YStruct{}
-					for _, v := range Z[key] {
-						if v != isNullYStruct {
-							r = v
+					for j := 0; j < len(Z[key]); j++ {
+						if Z[key][j] != isNullYStruct {
+							r = Z[key][j]
 							break
 						}
 					}
@@ -93,7 +92,7 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 	}
 }
 
-func SudokuSolve(grid [9][9]int) {
+func SudokuSolve(grid [9][9]int) [9][9]int {
 	R, C := 3, 3
 	N := 9
 	X := [324]XStruct{} // [N * N * 4]
@@ -147,22 +146,23 @@ func SudokuSolve(grid [9][9]int) {
 			}
 		}
 	}
-	// fmt.Println(123, a)
+
 	Z := map[XStruct][9]YStruct{}
 	exactCover(X, Y, Z)
 	zeroCount := 0
-	for i, row := range grid {
-		for j, n := range row {
-			if n == 0 {
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[i]); j++ {
+			if grid[i][j] == 0 {
 				zeroCount++
 			} else {
-				choice(Z, Y, YStruct{i, j, n})
+				choice(Z, Y, YStruct{i, j, grid[i][j]})
 			}
 		}
 	}
 	solution := make([]YStruct, zeroCount)
 	solve(Z, Y, solution)
-	for _, v := range solution {
-		grid[v.R][v.C] = v.N
+	for i := 0; i < len(solution); i++ {
+		grid[solution[i].R][solution[i].C] = solution[i].N
 	}
+	return grid
 }
