@@ -24,5 +24,5 @@ func main() {
 
 	fmt.Println(answer)
 	finishTime := time.Now()
-	fmt.Printf("time: %f[Sec]", (finishTime.Sub(startTime)).Seconds())
+	fmt.Printf("time: %f[Sec]\n", (finishTime.Sub(startTime)).Seconds())
 }
