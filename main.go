@@ -18,7 +18,7 @@ func main() {
 		{6, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	answer := modules.SudokuSolve(grid)
+	modules.SudokuSolve(grid)
 
-	fmt.Println(answer)
+	fmt.Println(grid)
 }

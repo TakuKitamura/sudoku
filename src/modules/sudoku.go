@@ -13,18 +13,16 @@ type YStruct struct {
 	N int
 }
 
-func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct) map[XStruct][9]YStruct {
-	Z := map[XStruct][9]YStruct{}
+func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct, Z map[XStruct][9]YStruct) {
 	i := 0
 	yStruct := [9]YStruct{}
-	for _, v := range X {
+	for j := 0; j < len(X); j++ {
 		for key, vv := range Y {
-
-			for _, vvv := range vv {
-				if v == vvv {
+			for k := 0; k < len(vv); k++ {
+				if X[j] == vv[k] {
 					yStruct[i] = key
 					if i == 8 {
-						Z[v] = yStruct
+						Z[X[j]] = yStruct
 						i = 0
 					} else {
 						i++
@@ -32,8 +30,8 @@ func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct) map[XStruct][9]YStruct
 				}
 			}
 		}
+		// fmt.Println()
 	}
-	return Z
 }
 
 func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
@@ -95,7 +93,7 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 	}
 }
 
-func SudokuSolve(grid [9][9]int) [9][9]int {
+func SudokuSolve(grid [9][9]int) {
 	R, C := 3, 3
 	N := 9
 	X := [324]XStruct{} // [N * N * 4]
@@ -118,11 +116,14 @@ func SudokuSolve(grid [9][9]int) [9][9]int {
 		}
 	}
 	Y := map[YStruct][4]XStruct{}
+	yStructArray := [729]YStruct{}
+	k = 0
 	for h := 0; h < N; h++ {
 		for i := 0; i < N; i++ {
 			for j := 1; j < N+1; j++ {
 				b := (h/R)*R + (i / C)
-				yStruct := YStruct{h, i, j}
+				// yStruct := YStruct{h, i, j}
+				yStructArray[k] = YStruct{h, i, j}
 
 				v := [2]int{h, i}
 
@@ -140,11 +141,15 @@ func SudokuSolve(grid [9][9]int) [9][9]int {
 
 				bn := XStruct{KeyName: keyNames[3], Values: v}
 
-				Y[yStruct] = [4]XStruct{rc, rn, cn, bn}
+				Y[yStructArray[k]] = [4]XStruct{rc, rn, cn, bn}
+
+				k++
 			}
 		}
 	}
-	Z := exactCover(X, Y)
+	// fmt.Println(123, a)
+	Z := map[XStruct][9]YStruct{}
+	exactCover(X, Y, Z)
 	zeroCount := 0
 	for i, row := range grid {
 		for j, n := range row {
@@ -160,5 +165,4 @@ func SudokuSolve(grid [9][9]int) [9][9]int {
 	for _, v := range solution {
 		grid[v.R][v.C] = v.N
 	}
-	return grid
 }
