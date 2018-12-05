@@ -166,7 +166,6 @@ func SudokuSolveAPI(c *gin.Context) {
 		util.LogUnexpectedErr(err)
 		return
 	}
-	util.RequestInfo(c, util.ErrStruct{}, sudokuSolveRequest)
 
 	startTime := time.Now()
 	answer := sudokuSolve(sudokuSolveRequest.Problem)
@@ -175,8 +174,8 @@ func SudokuSolveAPI(c *gin.Context) {
 		"answer": answer,
 		"time":   time,
 	})
-	errStruct := util.ErrStruct{}
-
-	util.APIErr(c, errStruct, sudokuSolveRequest)
+	// errStruct := util.ErrStruct{}
+	// util.RequestInfo(c, util.ErrStruct{}, sudokuSolveRequest)
+	// util.APIErr(c, errStruct, sudokuSolveRequest)
 	return
 }
