@@ -9,29 +9,29 @@ import (
 )
 
 type SudokuSolveRequest struct {
-	Problem [9][9]int `json:"problem"`
+	Problem [9][9]uint8 `json:"problem"`
 }
 
 type XStruct struct {
 	KeyName string
-	Values  [2]int
+	Values  [2]uint8
 }
 
 type XArray []XStruct
 
 type YStruct struct {
-	R int
-	C int
-	N int
+	R uint8
+	C uint8
+	N uint8
 }
 
 func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct, Z map[XStruct][9]YStruct) {
-	for j := 0; j < len(X); j++ {
+	for j := uint16(0); j < uint16(len(X)); j++ {
 		XJ := &X[j]
 		yStruct := [9]YStruct{}
-		i := 0
+		i := uint8(0)
 		for key, vv := range Y {
-			for k := 0; k < len(vv); k++ {
+			for k := uint8(0); k < uint8(len(vv)); k++ {
 				if *XJ == vv[k] {
 					yStruct[i] = key
 					if i == 8 {
@@ -48,7 +48,7 @@ func exactCover(X [324]XStruct, Y map[YStruct][4]XStruct, Z map[XStruct][9]YStru
 
 func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
 	isNullYStruct := YStruct{0, 0, 0}
-	for i := 0; i < len(Y[r]); i++ {
+	for i := uint8(0); i < uint8(len(Y[r])); i++ {
 		for _, vv := range Z[Y[r][i]] {
 			if vv == isNullYStruct {
 				continue
@@ -56,7 +56,7 @@ func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
 			for _, vvv := range Y[vv] {
 				if vvv != Y[r][i] {
 					ZV := Z[vvv]
-					for j := 0; j < len(ZV); j++ {
+					for j := uint8(0); j < uint8(len(ZV)); j++ {
 						if ZV[j] == vv {
 							ZV[j] = YStruct{0, 0, 0}
 							Z[vvv] = ZV
@@ -71,21 +71,21 @@ func choice(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, r YStruct) {
 }
 
 func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruct) {
-	i := 0
-	for i < len(solution) {
+	i := uint8(0)
+	for i < uint8(len(solution)) {
 		isNullYStruct := YStruct{0, 0, 0}
 		for key, v := range Z {
-			counter := 0
-			for i := 0; i < len(v); i++ {
+			counter := uint8(0)
+			for i := uint8(0); i < uint8(len(v)); i++ {
 				if v[i] != isNullYStruct {
 					counter++
 				}
 			}
-			min := 10
+			min := uint8(10)
 			if counter < min {
 				min = counter
 				if min == 1 {
-					for j := 0; j < len(Z[key]); j++ {
+					for j := uint8(0); j < uint8(len(Z[key])); j++ {
 						if Z[key][j] != isNullYStruct {
 							solution[i] = Z[key][j]
 							choice(Z, Y, solution[i])
@@ -100,53 +100,50 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 	}
 }
 
-func sudokuSolve(problem [9][9]int) [9][9]int {
-	N := 9
+func sudokuSolve(problem [9][9]uint8) [9][9]uint8 {
+	N := uint8(9)
 	X := [324]XStruct{} // [N * N * 4]
 	keyNames := [4]string{"rc", "rn", "cn", "bn"}
-	k := 0
-	for i := 0; i < N; i++ {
-		for j := 0; j < N; j++ {
-			X[k] = XStruct{KeyName: keyNames[0], Values: [2]int{i, j}}
+	k := uint16(0)
+	for i := uint8(0); i < uint8(N); i++ {
+		for j := uint8(0); j < uint8(N); j++ {
+			X[k] = XStruct{KeyName: keyNames[0], Values: [2]uint8{i, j}}
 			k++
 		}
 	}
-	for h := 0; h < 3; h++ {
-		for i := 0; i < N; i++ {
-			for j := 1; j < N+1; j++ {
-				X[k] = XStruct{KeyName: keyNames[h+1], Values: [2]int{i, j}}
+	for h := uint8(0); h < 3; h++ {
+		for i := uint8(0); i < uint8(N); i++ {
+			for j := uint8(1); j < uint8(N+1); j++ {
+				X[k] = XStruct{KeyName: keyNames[h+1], Values: [2]uint8{i, j}}
 				k++
 			}
 		}
 	}
 	Y := map[YStruct][4]XStruct{}
-	yStructArray := [729]YStruct{}
-	k = 0
-	for h := 0; h < N; h++ {
-		for i := 0; i < N; i++ {
-			for j := 1; j < N+1; j++ {
-				R, C := 3, 3
+	for h := uint8(0); h < uint8(N); h++ {
+		for i := uint8(0); i < uint8(N); i++ {
+			for j := uint8(1); j < uint8(N+1); j++ {
+				R, C := uint8(3), uint8(3)
 				b := (h/R)*R + (i / C)
-				yStructArray[k] = YStruct{h, i, j}
-				v := [2]int{h, i}
+				yStruct := YStruct{h, i, j}
+				v := [2]uint8{h, i}
 				rc := XStruct{KeyName: keyNames[0], Values: v}
-				v = [2]int{h, j}
+				v = [2]uint8{h, j}
 				rn := XStruct{KeyName: keyNames[1], Values: v}
-				v = [2]int{i, j}
+				v = [2]uint8{i, j}
 				cn := XStruct{KeyName: keyNames[2], Values: v}
-				v = [2]int{b, j}
+				v = [2]uint8{b, j}
 				bn := XStruct{KeyName: keyNames[3], Values: v}
-				Y[yStructArray[k]] = [4]XStruct{rc, rn, cn, bn}
-				k++
+				Y[yStruct] = [4]XStruct{rc, rn, cn, bn}
 			}
 		}
 	}
 
 	Z := map[XStruct][9]YStruct{}
 	exactCover(X, Y, Z)
-	zeroCount := 0
-	for i := 0; i < len(problem); i++ {
-		for j := 0; j < len(problem[i]); j++ {
+	zeroCount := uint8(0)
+	for i := uint8(0); i < uint8(len(problem)); i++ {
+		for j := uint8(0); j < uint8(len(problem[i])); j++ {
 			if problem[i][j] == 0 {
 				zeroCount++
 			} else {
@@ -156,7 +153,7 @@ func sudokuSolve(problem [9][9]int) [9][9]int {
 	}
 	solution := make([]YStruct, zeroCount)
 	solve(Z, Y, solution)
-	for i := 0; i < len(solution); i++ {
+	for i := uint8(0); i < uint8(len(solution)); i++ {
 		problem[solution[i].R][solution[i].C] = solution[i].N
 	}
 	return problem

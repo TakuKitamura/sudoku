@@ -6,7 +6,7 @@ import (
 )
 
 func TestSudokuSolve(t *testing.T) {
-	grid := [9][9]int{
+	grid := [9][9]uint8{
 		{0, 6, 1, 0, 0, 7, 0, 0, 3},
 		{0, 9, 2, 0, 0, 3, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -20,7 +20,7 @@ func TestSudokuSolve(t *testing.T) {
 
 	answer := sudokuSolve(grid)
 
-	correct := [9][9]int{
+	correct := [9][9]uint8{
 		{4, 6, 1, 9, 8, 7, 2, 5, 3},
 		{7, 9, 2, 4, 5, 3, 1, 6, 8},
 		{3, 8, 5, 2, 1, 6, 4, 7, 9},
@@ -38,7 +38,7 @@ func TestSudokuSolve(t *testing.T) {
 }
 
 func BenchmarkSudokuSolve(b *testing.B) {
-	grid := [9][9]int{
+	grid := [9][9]uint8{
 		{0, 6, 1, 0, 0, 7, 0, 0, 3},
 		{0, 9, 2, 0, 0, 3, 0, 0, 0},
 		{0, 0, 0, 0, 0, 0, 0, 0, 0},
