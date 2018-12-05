@@ -1,4 +1,4 @@
-package modules
+package api
 
 import (
 	"reflect"
@@ -18,7 +18,7 @@ func TestSudokuSolve(t *testing.T) {
 		{6, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	answer := SudokuSolve(grid)
+	answer := sudokuSolve(grid)
 
 	correct := [9][9]int{
 		{4, 6, 1, 9, 8, 7, 2, 5, 3},
@@ -50,6 +50,6 @@ func BenchmarkSudokuSolve(b *testing.B) {
 		{6, 0, 0, 0, 0, 0, 0, 0, 0},
 	}
 
-	SudokuSolve(grid)
+	sudokuSolve(grid)
 
 }

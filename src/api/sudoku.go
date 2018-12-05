@@ -1,4 +1,16 @@
-package modules
+package api
+
+import (
+	"net/http"
+	"sudoku/src/util"
+	"time"
+
+	"github.com/gin-gonic/gin"
+)
+
+type SudokuSolveRequest struct {
+	Problem [9][9]int `json:"problem"`
+}
 
 type XStruct struct {
 	KeyName string
@@ -88,7 +100,7 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 	}
 }
 
-func SudokuSolve(grid [9][9]int) [9][9]int {
+func sudokuSolve(problem [9][9]int) [9][9]int {
 	N := 9
 	X := [324]XStruct{} // [N * N * 4]
 	keyNames := [4]string{"rc", "rn", "cn", "bn"}
@@ -133,19 +145,41 @@ func SudokuSolve(grid [9][9]int) [9][9]int {
 	Z := map[XStruct][9]YStruct{}
 	exactCover(X, Y, Z)
 	zeroCount := 0
-	for i := 0; i < len(grid); i++ {
-		for j := 0; j < len(grid[i]); j++ {
-			if grid[i][j] == 0 {
+	for i := 0; i < len(problem); i++ {
+		for j := 0; j < len(problem[i]); j++ {
+			if problem[i][j] == 0 {
 				zeroCount++
 			} else {
-				choice(Z, Y, YStruct{i, j, grid[i][j]})
+				choice(Z, Y, YStruct{i, j, problem[i][j]})
 			}
 		}
 	}
 	solution := make([]YStruct, zeroCount)
 	solve(Z, Y, solution)
 	for i := 0; i < len(solution); i++ {
-		grid[solution[i].R][solution[i].C] = solution[i].N
+		problem[solution[i].R][solution[i].C] = solution[i].N
 	}
-	return grid
+	return problem
+}
+
+func SudokuSolveAPI(c *gin.Context) {
+	sudokuSolveRequest := SudokuSolveRequest{}
+	err := c.BindJSON(&sudokuSolveRequest)
+	if err != nil {
+		util.LogUnexpectedErr(err)
+		return
+	}
+	util.RequestInfo(c, util.ErrStruct{}, sudokuSolveRequest)
+
+	startTime := time.Now()
+	answer := sudokuSolve(sudokuSolveRequest.Problem)
+	time := time.Now().Sub(startTime).Seconds()
+	c.JSON(http.StatusOK, gin.H{
+		"answer": answer,
+		"time":   time,
+	})
+	errStruct := util.ErrStruct{}
+
+	util.APIErr(c, errStruct, sudokuSolveRequest)
+	return
 }

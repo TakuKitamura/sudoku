@@ -1,28 +1,29 @@
 package main
 
 import (
-	"fmt"
-	"sudoku/src/modules"
-	"time"
+	"log"
+	"os"
+	"sudoku/src/api"
+
+	"github.com/gin-gonic/gin"
 )
 
+func init() {
+	gin.DisableConsoleColor()
+	os.Setenv("DEBUG", "true")
+}
+
 func main() {
-	startTime := time.Now()
-	grid := [9][9]int{
-		{4, 6, 1, 0, 0, 7, 0, 0, 3},
-		{0, 9, 2, 0, 0, 3, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 0, 0, 0},
-		{0, 0, 8, 5, 3, 0, 0, 0, 0},
-		{0, 0, 0, 0, 0, 0, 5, 0, 4},
-		{5, 0, 0, 0, 0, 8, 0, 0, 0},
-		{0, 4, 0, 0, 0, 0, 0, 0, 1},
-		{0, 0, 0, 1, 6, 0, 8, 0, 0},
-		{6, 0, 0, 0, 0, 0, 0, 0, 0},
+
+	r := gin.Default()
+	gin.DebugPrintRouteFunc = func(httpMethod, absolutePath, handlerName string, nuHandlers int) {
+		log.Printf("endpoint %v %v %v %v\n", httpMethod, absolutePath, handlerName, nuHandlers)
 	}
 
-	answer := modules.SudokuSolve(grid)
+	v00 := r.Group("/v0.0")
+	{
+		v00.POST("/sudoku/solve", api.SudokuSolveAPI)
+	}
 
-	fmt.Println(answer)
-	finishTime := time.Now()
-	fmt.Printf("time: %f[Sec]\n", (finishTime.Sub(startTime)).Seconds())
+	r.Run(":8080")
 }
