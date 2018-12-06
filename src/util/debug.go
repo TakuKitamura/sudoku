@@ -8,16 +8,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type errStruct struct {
+type OneErrorStruct struct {
 	Domain  string `json:"domain"`
 	Reason  string `json:"reason"`
 	Message string `json:"message"`
 }
 
 type ErrStruct struct {
-	Errors  []errStruct `json:"errors"`
-	Code    int         `json:"code"`
-	Message string      `json:"message"`
+	Errors  []OneErrorStruct `json:"errors"`
+	Code    int              `json:"code"`
+	Message string           `json:"message"`
 }
 
 type RequestLog struct {
@@ -37,7 +37,6 @@ func APIErr(c *gin.Context, errStruct ErrStruct, requestBody interface{}) {
 	c.JSON(errStruct.Code, gin.H{
 		"error": errStruct,
 	})
-
 	errAPILog := RequestLog{
 		Time:        time.Now(),
 		ClientIP:    c.ClientIP(),
@@ -50,21 +49,21 @@ func APIErr(c *gin.Context, errStruct ErrStruct, requestBody interface{}) {
 		RequestBody: requestBody,
 		Error:       errStruct,
 	}
-
 	json, err := MarshalIndent(errAPILog)
-
 	if err != nil {
 		LogUnexpectedErr(err)
 		return
 	}
-
 	LogAPIErr(c.HandlerName(), json)
 	return
+}
 
+func APIStatusOK(c *gin.Context, responseBody interface{}) {
+	c.JSON(http.StatusOK, responseBody)
+	return
 }
 
 func RequestInfo(c *gin.Context, errStruct ErrStruct, requestBody interface{}) {
-
 	requestAPILog := RequestLog{
 		Time:        time.Now(),
 		ClientIP:    c.ClientIP(),
@@ -77,15 +76,11 @@ func RequestInfo(c *gin.Context, errStruct ErrStruct, requestBody interface{}) {
 		RequestBody: requestBody,
 		Error:       errStruct,
 	}
-
 	json, err := MarshalIndent(requestAPILog)
-
 	if err != nil {
 		LogUnexpectedErr(err)
 		return
 	}
-
 	LogDebugMsg(json)
 	return
-
 }
