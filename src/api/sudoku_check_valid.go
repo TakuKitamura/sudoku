@@ -24,18 +24,6 @@ func SudokuValidCheckAPI(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusOK, cannotSolveSudokuResponse)
-		// errStruct := util.ErrStruct{
-		// 	Errors: []util.OneErrorStruct{
-		// 		util.OneErrorStruct{
-		// 			Domain:  "localhost",
-		// 			Reason:  reason,
-		// 			Message: err.Error(),
-		// 		},
-		// 	},
-		// 	Code:    500,
-		// 	Message: err.Error(),
-		// }
-		// util.APIErr(c, errStruct, sudokuSolveRequest)
 		return
 	}
 

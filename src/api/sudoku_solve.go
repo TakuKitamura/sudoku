@@ -43,7 +43,7 @@ type YStruct struct {
 
 func sudokuValidCheck(problem [9][9]uint8, isValidCheckAPI bool) (solution []YStruct, reason string, cannotSolveSudokuResponse CannotSolveSudokuResponse, err error) {
 	N := uint8(9)
-	X := [324]XStruct{} // [N * N * 4]
+	X := [324]XStruct{}
 	keyNames := [4]string{"rc", "rn", "cn", "bn"}
 	k := uint16(0)
 	tate := [9]map[uint8]bool{}
