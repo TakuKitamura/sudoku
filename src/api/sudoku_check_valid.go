@@ -1,7 +1,6 @@
 package api
 
 import (
-	"net/http"
 	"sudoku/src/util"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +22,7 @@ func SudokuValidCheckAPI(c *gin.Context) {
 	_, _, cannotSolveSudokuResponse, err := sudokuValidCheck(sudokuSolveRequest.Problem, true)
 
 	if err != nil {
-		c.JSON(http.StatusOK, cannotSolveSudokuResponse)
+		util.JSONStatusOK(c, cannotSolveSudokuResponse)
 		return
 	}
 
@@ -32,6 +31,6 @@ func SudokuValidCheckAPI(c *gin.Context) {
 		Message: "can solve sudoku!",
 	}
 
-	util.APIStatusOK(c, sudokuSolveOKResponse)
+	util.JSONStatusOK(c, sudokuSolveOKResponse)
 	return
 }

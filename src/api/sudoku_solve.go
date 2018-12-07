@@ -315,11 +315,17 @@ func SudokuSolveAPI(c *gin.Context) {
 		util.APIErr(c, errStruct, sudokuSolveRequest)
 		return
 	}
+	resType := c.Query("type")
+	if resType == "img" {
+		imgBytes := sudokuGenerateImg(answer)
+		util.JPEGStatusOK(c, imgBytes)
+		return
+	}
 	sudokuSolveOKResponse := SudokuSolveOKResponse{
 		Status: "ok",
 		Answer: answer,
 		Time:   time,
 	}
-	util.APIStatusOK(c, sudokuSolveOKResponse)
+	util.JSONStatusOK(c, sudokuSolveOKResponse)
 	return
 }

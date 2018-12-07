@@ -13,10 +13,12 @@ test:
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
-run:
-	echo "[GO TEST!]"
+start:
+	cowsay -f small "GO TEST..."
 	cd ./src/api && $(GOTEST)
-	echo "[GO BUILD!]"
+	cowsay -f small "GO TEST PASS!"
+	cowsay -f small "GO BUILD..."
 	$(GOBUILD) -o $(BINARY_NAME) -v
-	echo "[GO RUN!]"
+	cowsay -f small "GO BUILD SUCCESS!"
+	cowsay -f small "GO RUN!"
 	./$(BINARY_NAME)

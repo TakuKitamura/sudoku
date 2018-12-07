@@ -22,6 +22,8 @@ func main() {
 	{
 		v00.POST("/sudoku/solve", api.SudokuSolveAPI)
 		v00.POST("/sudoku/check", api.SudokuValidCheckAPI)
+		v00.POST("/sudoku/generate/img", api.SudokuGenerateImgAPI)
+		v00.POST("/sudoku/generate/problem", api.SudokuGenerateProblemAPI)
 	}
 	r.Run(":8080")
 }

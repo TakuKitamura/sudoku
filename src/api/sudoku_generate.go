@@ -1,10 +1,17 @@
 package api
 
 import (
-	"fmt"
 	"math/rand"
+	"sudoku/src/util"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
+
+type SudokuGenerateProblemResponse struct {
+	Status  string      `json:"status"`
+	Problem [9][9]uint8 `json:"problem"`
+}
 
 func rundomValue(n int) int {
 	rand.Seed(time.Now().UnixNano())
@@ -12,7 +19,7 @@ func rundomValue(n int) int {
 }
 
 func sudokuGenerate() (answer [9][9]uint8) {
-	seedSudoku := [9][9]uint8{
+	problem := [9][9]uint8{
 		{4, 6, 1, 9, 8, 7, 2, 5, 3},
 		{7, 9, 2, 4, 5, 3, 1, 6, 8},
 		{3, 8, 5, 2, 1, 6, 4, 7, 9},
@@ -23,7 +30,7 @@ func sudokuGenerate() (answer [9][9]uint8) {
 		{2, 5, 3, 1, 6, 9, 8, 4, 7},
 		{6, 1, 7, 8, 4, 2, 9, 3, 5},
 	}
-	temp := seedSudoku
+	oldProblem := problem
 	for {
 		// exchange
 		// 0: 0and1
@@ -54,21 +61,36 @@ func sudokuGenerate() (answer [9][9]uint8) {
 				d = a
 			}
 			for j := 0; j < 9; j++ {
-				tempVal := seedSudoku[c][j]
-				seedSudoku[c][j] = seedSudoku[d][j]
-				seedSudoku[d][j] = tempVal
+				tempVal := problem[c][j]
+				problem[c][j] = problem[d][j]
+				problem[d][j] = tempVal
 			}
 		}
 		for i := 0; i < 65; i++ {
 			j := rundomValue(9)
 			k := rundomValue(9)
-			seedSudoku[j][k] = 0
+			problem[j][k] = 0
 		}
-		fmt.Println(seedSudoku)
-		answer, _, _, err := sudokuSolve(seedSudoku)
+		_, _, _, err := sudokuSolve(problem)
 		if err == nil {
-			return answer
+			return problem
 		}
-		seedSudoku = temp
+		problem = oldProblem
 	}
+}
+
+func SudokuGenerateProblemAPI(c *gin.Context) {
+	problem := sudokuGenerate()
+	resType := c.Query("type")
+	if resType == "img" {
+		imgBytes := sudokuGenerateImg(problem)
+		util.JPEGStatusOK(c, imgBytes)
+		return
+	}
+	sudokuGenerateProblemResponse := SudokuGenerateProblemResponse{
+		Problem: problem,
+		Status:  "ok",
+	}
+	util.JSONStatusOK(c, sudokuGenerateProblemResponse)
+	return
 }

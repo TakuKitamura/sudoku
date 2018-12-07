@@ -58,8 +58,13 @@ func APIErr(c *gin.Context, errStruct ErrStruct, requestBody interface{}) {
 	return
 }
 
-func APIStatusOK(c *gin.Context, responseBody interface{}) {
+func JSONStatusOK(c *gin.Context, responseBody interface{}) {
 	c.JSON(http.StatusOK, responseBody)
+	return
+}
+
+func JPEGStatusOK(c *gin.Context, imgBytes []byte) {
+	c.Data(http.StatusOK, "image/jpeg", imgBytes)
 	return
 }
 
