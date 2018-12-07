@@ -112,7 +112,3 @@ func BenchmarkSudokuSolve(b *testing.B) {
 	}
 	sudokuSolve(grid)
 }
-
-func TestSome(t *testing.T) {
-	sudokuGenerate()
-}
