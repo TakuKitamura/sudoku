@@ -283,6 +283,7 @@ func solve(Z map[XStruct][9]YStruct, Y map[YStruct][4]XStruct, solution []YStruc
 
 func sudokuSolve(problem [9][9]uint8) (answer [9][9]uint8, reason string, cannotSolveSudokuResponse CannotSolveSudokuResponse, err error) {
 	solution, reason, cannotSolveSudokuResponse, err := sudokuValidCheck(problem, false)
+	answer = problem
 	for i := uint8(0); i < uint8(len(solution)); i++ {
 		answer[solution[i].R][solution[i].C] = solution[i].N
 	}

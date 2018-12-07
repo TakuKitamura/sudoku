@@ -100,7 +100,6 @@ func main() {
 		VLine(img, i, size, (length - (size)), black)
 		for k := 0; k < 9; k++ {
 			if j < 9 {
-				// fmt.Println(i, j, k, grid[j][k], ((length-(size)*2)/9)*(k+1), i+size)
 				if grid[j][k] > 0 {
 					num := fmt.Sprint(grid[j][k])
 					addLabel(img, (size*2)+(100*k), i+size*4, num)
