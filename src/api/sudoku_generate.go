@@ -23,9 +23,7 @@ func sudokuGenerate() (answer [9][9]uint8) {
 		{2, 5, 3, 1, 6, 9, 8, 4, 7},
 		{6, 1, 7, 8, 4, 2, 9, 3, 5},
 	}
-
 	temp := seedSudoku
-
 	for {
 		// exchange
 		// 0: 0and1
