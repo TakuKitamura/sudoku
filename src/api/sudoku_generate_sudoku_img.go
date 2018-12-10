@@ -65,9 +65,10 @@ func sudokuGenerateImg(problem [9][9]uint8) (imgBytes []byte) {
 	y := 0
 	size := 20
 	length := 47 * size
+	outSideSpace := 150
 	white := color.RGBA{255, 255, 255, 255}
 	black := color.RGBA{0, 0, 0, 255}
-	img := image.NewRGBA(image.Rect(x, y, length, length))
+	img := image.NewRGBA(image.Rect(x-outSideSpace, y-outSideSpace, length+outSideSpace, length+outSideSpace))
 	fillRect(img, white)
 	j := 0
 	for i := size; i < length; i += (length - (size)*2) / 9 {
