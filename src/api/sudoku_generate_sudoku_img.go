@@ -65,15 +65,21 @@ func sudokuGenerateImg(problem [9][9]uint8) (imgBytes []byte) {
 	y := 0
 	size := 20
 	length := 47 * size
-	outSideSpace := 150
+	outSideSpace := 200
 	white := color.RGBA{255, 255, 255, 255}
 	black := color.RGBA{0, 0, 0, 255}
 	img := image.NewRGBA(image.Rect(x-outSideSpace, y-outSideSpace, length+outSideSpace, length+outSideSpace))
 	fillRect(img, white)
 	j := 0
+	borderWidth := 3
 	for i := size; i < length; i += (length - (size)*2) / 9 {
-		hLine(img, size, i, (length - (size)), black)
-		vLine(img, i, size, (length - (size)), black)
+		for k := 0; k < borderWidth; k++ {
+			hLine(img, size, i+k, (length - (size)), black)
+			vLine(img, i+k, size, (length - (size)), black)
+			hLine(img, size, i-k, (length - (size)), black)
+			vLine(img, i-k, size, (length - (size)), black)
+		}
+
 		for k := 0; k < 9; k++ {
 			if j < 9 {
 				if problem[j][k] > 0 {
@@ -83,10 +89,12 @@ func sudokuGenerateImg(problem [9][9]uint8) (imgBytes []byte) {
 			}
 		}
 		if j%3 == 0 {
-			hLine(img, size, i+1, (length - (size)), black)
-			vLine(img, i+1, size, (length - (size)), black)
-			hLine(img, size, i-1, (length - (size)), black)
-			vLine(img, i-1, size, (length - (size)), black)
+			for k := borderWidth; k < borderWidth*2; k++ {
+				hLine(img, size, i+k, (length - (size)), black)
+				vLine(img, i+k, size, (length - (size)), black)
+				hLine(img, size, i-k, (length - (size)), black)
+				vLine(img, i-k, size, (length - (size)), black)
+			}
 		}
 		j++
 	}
