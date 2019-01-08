@@ -17,3 +17,7 @@
 # Binary
 sudoku
 main
+.DS_Store
+
+# Go
+vendor
