@@ -3,8 +3,9 @@
 sudoku API Server.
 
 ### Dependencies
-* Go
-* dep
+* Golang
+* dep command
+* make command
 
 ### Setup
 ```sh
