@@ -2,7 +2,7 @@
 
 sudoku API Server.
 
-# Dependencies
+### Dependencies
 * Go
 * dep
 
