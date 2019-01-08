@@ -9,7 +9,6 @@ build:
 	$(GOBUILD) -o $(BINARY_NAME)
 test:
 	cd ./src/api && $(GOTEST)
-
 clean:
 	$(GOCLEAN)
 	rm -f $(BINARY_NAME)
@@ -22,3 +21,5 @@ start:
 	cowsay -f small "GO BUILD SUCCESS!"
 	cowsay -f small "GO RUN!"
 	./$(BINARY_NAME)
+install:
+	dep ensure
